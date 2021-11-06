@@ -1,4 +1,4 @@
-var User = {
+export default  User = {
     firstName : null,
     lastName : null,
     id : null,

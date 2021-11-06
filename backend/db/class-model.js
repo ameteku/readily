@@ -1,6 +1,6 @@
 
 
-var Class = {
+exports. Class = {
     title : null,
     id : null,
     permissions : {
@@ -11,12 +11,12 @@ var Class = {
     }
 }
 
-var Topic = {
+exports.Topic = {
     topicName : null,
     resourceList : [],
 }
 
-var Note = {
+exports.Note = {
     isPrivate: false,
     noteLink : null,
     uploaderId : null,
