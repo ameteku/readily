@@ -46,8 +46,8 @@ class MyApp extends StatelessWidget {
               ),
           '/signup': (context) => const SignUpPage(),
           '/homepage': (context) => const MyHomePage(title: 'Readily Notes'),
-          '/class': (context) => ClassPage(title: 'Readily Notes'),
-          '/note-slides': (context) => NoteSlideShowPage()
+          '/class': (context) => const ClassPage(title: 'Readily Notes'),
+          '/note-slides': (context) => const NoteSlideShowPage()
         });
   }
 }

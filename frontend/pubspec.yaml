@@ -38,6 +38,7 @@ dependencies:
   image_cropper: ^1.4.1
   json_annotation: ^4.3.0
   rxdart: ^0.27.2
+  expandable: ^5.0.1
 
 dev_dependencies:
   flutter_test:
