@@ -15,14 +15,14 @@ void main() {
 class MyApp extends StatelessWidget {
   late AppState _appState;
   late BackendRequest _backendRequest;
-  MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key})
+      : _appState = AppState(),
+        _backendRequest = BackendRequest(),
+        super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    _appState = AppState();
-    _backendRequest = BackendRequest();
-
     return MaterialApp(
         title: 'Readily',
         theme: ThemeData(
@@ -44,8 +44,16 @@ class MyApp extends StatelessWidget {
                 appState: _appState,
                 backendRequest: _backendRequest,
               ),
-          '/signup': (context) => const SignUpPage(),
-          '/homepage': (context) => const MyHomePage(title: 'Readily Notes'),
+          '/signup': (context) => SignUpPage(
+                appState: _appState,
+                backendRequest: _backendRequest,
+              ),
+          '/homepage': (context) => MyHomePage(appState: _appState, backendRequest: _backendRequest, title: 'Readily Notes'),
+          '/note-slides': (context) => const NoteSlideShowPage(
+                title: "NoteSldier",
+                noteIdList: [],
+                startingId: 4,
+              ),
           '/class': (context) => const ClassPage(title: 'Readily Notes', classId: 2),
           '/note-slides': (context) => const NoteSlideShowPage(
                 title: 'Readily Notes',

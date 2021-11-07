@@ -2,19 +2,19 @@ import 'dart:html';
 import 'dart:io' as io;
 import 'dart:typed_data';
 
-import 'package:file_picker/_internal/file_picker_web.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_platform_interface/src/types/image_source.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:readily/modules/class/class_page.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:readily/appstate/app_state.dart';
+import 'package:readily/backend-requests/request.dart';
+import 'package:readily/folder/class_model.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  final AppState appState;
+  final BackendRequest backendRequest;
+
+  const MyHomePage({Key? key, required this.title, required this.backendRequest, required this.appState}) : super(key: key);
 
   final String title;
   final String userName = 'Celina Lind';
@@ -34,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    classModels = widget.backendRequest.getClasses(widget.appState.loggedInUser!.classIds, "temporary");
     _classNameController = TextEditingController();
     _topicNameController = TextEditingController();
   }
@@ -82,32 +83,25 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  late Future<List<ClassModel>?> classModels;
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)), Icon(Icons.book_online_outlined)],
         ),
-        // leading: Text(
-        //   widget.userName, style: TextStyle(color: Colors.white, fontSize: 23),
-        //   //
-        // ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+          child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
             const ListTile(
               leading: Icon(
                 Icons.search,
@@ -134,17 +128,37 @@ class _MyHomePageState extends State<MyHomePage> {
               'My Classes:',
               style: TextStyle(color: Color(0xff133c55), fontWeight: FontWeight.bold, fontSize: 24),
             ),
-            Column(
-              children: [
-                PreferredSize(
-                  preferredSize: const Size.fromHeight(200),
-                  child: Wrap(spacing: 8.0, runSpacing: 4.0, children: myClass(classIds)),
-                )
-              ],
-            )
-          ]),
+            Expanded(
+              child: FutureBuilder(
+                future: classModels,
+                builder: (context, AsyncSnapshot<List<ClassModel>?> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView(
+                      children: snapshot.data!
+                          .map((e) => Container(
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                child: ListTile(
+                                  title: Text(e.title),
+                                  subtitle: Row(
+                                    children: [const Text('Date Created'), Text(e.permissions['admin']?[0] ?? "")],
+                                  ),
+                                  tileColor: const Color(0xfffcbfb7),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/class');
+                                  },
+                                ),
+                              ))
+                          .toList(),
+                    );
+                  } else {
+                    return const Text("Loading your Class...");
+                  }
+                },
+              ),
+            ),
+          ],
         ),
-      ),
+      )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
@@ -185,22 +199,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             child:
                                 ListTile(title: const Text('Add First Topic'), subtitle: TextFormField(controller: _topicNameController)),
                           ),
-                          // Padding(
-                          //   padding: EdgeInsets.all(8.0),
-                          //   child: TextButton(
-                          //     child: Center(
-                          //         child: Column(children: const [
-                          //       Text('Upload Note Images'),
-                          //       Icon(
-                          //         Icons.add_a_photo,
-                          //         size: 24,
-                          //       )
-                          //     ])),
-                          //     onPressed: () {
-                          //       getImage(widget._pickingType);
-                          //     },
-                          //   ),
-                          // ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: RaisedButton(
