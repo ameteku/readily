@@ -186,9 +186,19 @@ app.post("/get-classes", async (req, res) => {
         res.json(result);
        }
 
-    
+})
 
+app.post("/class/update-permissions", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
 
+    const classId = req.body.classId;
+    const permission = req.body.permissions;
+
+    await updateClassPermission(classId, permissions);
+
+    res.json({ "result": "update successful" }); 
 })
 
 // updateClassPermission() {};
@@ -199,31 +209,168 @@ async function updateClassPermission(classId, permissions) {
     {
         $set: {"permissions": permissions}
 
-});
+    });
 };
 
+app.post("/create-topic", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    const topicId = req.body.topicId;
+    const topicName = req.body.topicName;
+
+    var result = await createTopic(topicId, topicName);
+
+    res.json({ "result": result });
+});
+
+async function createTopic(topicId, topicName) {
+    //find topic in database
+    var cursorFile = await db.collection('topics').find({
+        "topic" : topicId
+    });
+    const list1 = await cursorFile.toArray()
 
 // createTopic() {};
 
+    if (list1.length >= 1){
+        return false    //class already exists
+    } else {
+        db.collection("topics").insertOne({
+            "pk" : "topics",
+            "id": topicId,
+            "name" : topicName
+        });
+        return {"message": "inserted successfully"}
+    }
+};
 
 
+async function createUser(firstName, lastName, classIds, username, password) {
+    var proceed = await doesUserExistAndAddNewUserInDatabase(firstName, lastName, classIds, username, password)
+    
+    return proceed
+};
 
-// createUser() {};
+app.post("/update-user", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
 
-// signInUser () {};
+    const username = req.body.username;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const classIds = req.body.classIds;
+    const password = req.body.password;
+    
 
-// updateUser() {};
+    await updateUser(firstName, lastName, classIds, username, password);
 
-// getNotes() {};
+    res.json({ "result": "update successful" }); 
+})
+
+async function updateUser(firstName, lastName, classIds, username, password) {
+    await db.collection('users').updateOne({
+        "username" : username
+    },
+    {
+        $set: {
+            "firstName":firstName,
+            "lastName": lastName,
+            "classIds": classIds,
+            "username":username,
+            "password":password
+        }
+
+    });
+};
+
+app.post("/get-notes", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    var result = await getNotes();
+    res.json(result);
+
+})
+
+async function getNotes() {
+    //find username in database
+    var cursorFile = await db.collection('notes').find({});
+    const list1 = await cursorFile.toArray()
+
+    return list1;
+};
 
 // linkVideo() {};
 
 
 // deleteNote() {};
 
-// addNotes() {};
+app.post("/add-note", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
 
-// toggleNotePrivacy() {};
+    const noteId = req.body.noteId;
+    const uploadTime = req.body.uploadTime;
+    const noteLink = req.body.noteLink;
+    const uploaderId = req.body.uploaderId;
+    const isPrivate = req.body.isPrivate;
+
+    var result = await addNote(noteId, uploadTime, noteLink, uploaderId, isPrivate);
+
+    res.json({ "result": result });
+});
+
+async function addNote(noteId, uploadTime, noteLink, uploaderId, isPrivate) {
+    //find topic in database
+    var cursorFile = await db.collection('notes').find({
+        "id" : noteId
+    });
+    const list1 = await cursorFile.toArray()
+
+    if (list1.length >= 1){
+        return false    //class already exists
+    } else {
+        db.collection("notes").insertOne({
+            "pk" : "notes",
+            "id": noteId,
+            "uploadTime" : uploadTime,
+            "noteLink": noteLink,
+            "uploaderId" : uploaderId,
+            "isPrivate": isPrivate
+        });
+        return {"message": "inserted successfully"}
+    }
+};
+
+app.post("/notes/update-privacy", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    const noteId = req.body.noteId;
+    const privacy = req.body.privacy;
+
+    await toggleNotePrivacy(noteId, privacy);
+
+    res.json({ "result": "update successful" }); 
+})
+
+async function toggleNotePrivacy(noteId, privacy) {
+    await db.collection('notes').updateOne({
+        "noteId" : noteId
+    },
+    {
+        $set: {
+            "privacy":privacy
+        }
+
+    });
+};
 
 
 app.listen(3000, async () => {
