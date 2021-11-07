@@ -38,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -49,38 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-        // leading: Padding(
-        //   padding: const EdgeInsets.only(left: 8.0),
-        //   child: TextButton(
-        //     // style: ButtonStyle(minimumSize: MaterialStateProperty<Size>(3)),
-        //     child: Text(
-        //       widget.userName,
-        //       style: TextStyle(color: Colors.white),
-        //       // textAlign: TextAlign.center,
-        //     ),
-        //     onPressed: () {
-        //       Navigator.popUntil(context, (route) => route.isFirst);
-        //     },
-        //   ),
-        // ),
+        leading: Text(
+          widget.userName, style: TextStyle(color: Colors.white, fontSize: 23),
+          //
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal)
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             const ListTile(
