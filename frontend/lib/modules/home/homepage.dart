@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:io' as io;
 import 'dart:typed_data';
 
@@ -25,24 +26,37 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormState>();
-
+  final List<int> classIds = [23, 4, 5, 77, 8, 8, 9, 5];
   int classId = 1;
-  // todo this function will filter through all the class ids for the given user and create a listview of classes
-  ListView myClasses() {
-    return ListView(
-      children: [
-        ListTile(
-          title: const Text('Engineering 101'),
-          subtitle: Row(
-            children: const [Text('Date Created'), Text('By: Username of Creator')],
-          ),
-          tileColor: Color(0xfffcbfb7),
-          onTap: () {
-            Navigator.pushNamed(context, '/class');
-          },
-        )
-      ],
-    );
+  late TextEditingController _classNameController;
+  late TextEditingController _topicNameController;
+
+  @override
+  void initState() {
+    super.initState();
+    classModels = widget.backendRequest.getClasses(widget.appState.loggedInUser!.classIds, "temporary");
+    _classNameController = TextEditingController();
+    _topicNameController = TextEditingController();
+  }
+
+  List<Widget> myClass(List<int> classIds) {
+    List<Widget> classList = [];
+
+    classIds.forEach((id) {
+      classList.add(Container(
+          child: ListTile(
+        title: const Text('Engineering 101'),
+        subtitle: Row(
+          children: const [Text('Date Created'), Text('By: Username of Creator')],
+        ),
+        tileColor: Color(0xfffcbfb7),
+        onTap: () {
+          // Navigator.pushNamed(context, '/class', arguments: ClassPage(title: widget.title, classId: classId));
+          Navigator.pushNamed(context, '/class');
+        },
+      )));
+    });
+    return classList;
   }
 
   void getImage(pickingType) async {
@@ -55,14 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ?.files;
 
     FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, type: pickingType);
-    print('Results: $result');
-    // if (result != null) {
-    //   List<String?> files = _paths!.map((e) => e.path).toList();
-    //   print('Image Files List<String>' + files.toString());
-    //   print('file picker result: $FilePickerResult');
-    // } else {
-    //   // User canceled the picker
-    // }
 
     if (result?.files.first != null) {
       var fileBytes = result!.files.first.bytes;
@@ -80,24 +86,18 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<ClassModel>?> classModels;
 
   @override
-  void initState() {
-    classModels = widget.backendRequest.getClasses(widget.appState.loggedInUser!.classIds, "temporary");
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        leading: Text(
-          widget.userName, style: TextStyle(color: Colors.white, fontSize: 23),
-          //
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)), Icon(Icons.book_online_outlined)],
         ),
       ),
-      body: Padding(
+      body: SafeArea(
+          child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,10 +123,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             const Text(
-              'Classes:',
-              style: TextStyle(color: Color(0xff133c55), fontSize: 23),
+              'My Classes:',
+              style: TextStyle(color: Color(0xff133c55), fontWeight: FontWeight.bold, fontSize: 24),
             ),
             Expanded(
               child: FutureBuilder(
@@ -158,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ),
+      )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
@@ -188,37 +188,29 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: ListTile(title: const Text('Enter Class Name'), subtitle: TextFormField()),
+                            child: ListTile(
+                                title: const Text('Enter Class Name'),
+                                subtitle: TextFormField(
+                                  controller: _classNameController,
+                                )),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: ListTile(title: const Text('Add First Topic'), subtitle: TextFormField()),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: TextButton(
-                              child: Center(
-                                  child: Column(children: const [
-                                Text('Upload Note Images'),
-                                Icon(
-                                  Icons.add_a_photo,
-                                  size: 24,
-                                )
-                              ])),
-                              onPressed: () {
-                                getImage(widget._pickingType);
-                              },
-                            ),
+                            child:
+                                ListTile(title: const Text('Add First Topic'), subtitle: TextFormField(controller: _topicNameController)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: RaisedButton(
                               child: Text("Create Class"),
                               onPressed: () {
+                                String className = _classNameController.text;
+                                String topicName = _topicNameController.text;
+                                DateTime createdAt = DateTime.now();
                                 if (_formKey.currentState!.validate()) {
                                   _formKey.currentState!.save();
                                 }
-                                //todo add api search here
+                                //todo add connection function
                               },
                             ),
                           )

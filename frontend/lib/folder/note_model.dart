@@ -6,12 +6,14 @@ part 'note_model.g.dart';
 
 @JsonSerializable()
 class NoteModel {
+  int noteId;
   bool isPrivate;
   DateTime uploadTime;
   int uploaderId;
   List noteByteImage;
 
-  NoteModel({required this.isPrivate, required this.uploaderId, required this.noteByteImage, required this.uploadTime});
+  NoteModel(
+      {required this.noteId, required this.isPrivate, required this.uploaderId, required this.noteByteImage, required this.uploadTime});
 
   factory NoteModel.fromJson(Map<String, dynamic> data) {
     return _$NoteModelFromJson(data);
@@ -23,6 +25,6 @@ class NoteModel {
 
   @override
   String toString() {
-    return 'NoteModel{isPrivate: $isPrivate, uploadTime: $uploadTime, uploaderId: $uploaderId, noteByteImage: $noteByteImage}';
+    return 'NoteModel{noteId: $noteId, isPrivate: $isPrivate, uploadTime: $uploadTime, uploaderId: $uploaderId, noteByteImage: $noteByteImage}';
   }
 }

@@ -6,11 +6,12 @@ part 'topic_model.g.dart';
 
 @JsonSerializable()
 class TopicModel {
+  int topicId;
   String topicName;
   List<String> resourceLinks;
-  List<NoteModel> notes;
+  List<int> noteIds;
 
-  TopicModel({required this.topicName, required this.resourceLinks, required this.notes});
+  TopicModel({required this.topicId, required this.topicName, required this.resourceLinks, required this.noteIds});
 
   factory TopicModel.fromJson(Map<String, dynamic> data) {
     return _$TopicModelFromJson(data);
@@ -22,6 +23,6 @@ class TopicModel {
 
   @override
   String toString() {
-    return 'TopicModel{topicName: $topicName, resourceLinks: $resourceLinks, Notes: $notes}';
+    return 'TopicModel{topicId: $topicId, topicName: $topicName, resourceLinks: $resourceLinks, noteIds: $noteIds}';
   }
 }
