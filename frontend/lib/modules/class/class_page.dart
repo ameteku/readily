@@ -28,6 +28,7 @@ class _ClassPageState extends State<ClassPage> {
   String className = 'Equation Time';
   List<int> topicIdList = [1, 3, 2, 4, 5, 6, 4, 2];
   final FileType _pickingType = FileType.image;
+  bool _userAdmin = true;
 
   void getImage(pickingType) async {
     io.File? croppedImage;
@@ -137,37 +138,88 @@ class _ClassPageState extends State<ClassPage> {
         title: Text(widget.title),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-            child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Text(
-                'Classes:',
-                style: TextStyle(color: Color(0xff133c55), fontSize: 23),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  tooltip: 'Share Class',
-                  iconSize: 20,
-                  icon: const Icon(Icons.share),
-                  onPressed: () {
-                    var data = {
-                      "title": className,
-                      "text": 'Checkout this class on Readily for some great notes!',
-                    };
-                    share(data);
-                  },
-                ),
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Classes:',
+                    style: TextStyle(color: Color(0xff133c55), fontSize: 23),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      tooltip: 'Share Class',
+                      iconSize: 20,
+                      icon: const Icon(Icons.share),
+                      onPressed: () {
+                        var data = {
+                          "title": className,
+                          "text": 'Checkout this class on Readily for some great notes!',
+                        };
+                        share(data);
+                      },
+                    ),
+                  ),
+                  _userAdmin
+                      ? Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: IconButton(
+                            tooltip: 'Admin Portal',
+                            iconSize: 20,
+                            icon: const Icon(Icons.person),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    content: Stack(
+                                      children: <Widget>[
+                                        Positioned(
+                                          right: -40.0,
+                                          top: -40.0,
+                                          child: InkResponse(
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const CircleAvatar(
+                                              child: Icon(Icons.close),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                            child: ExpandablePanel(
+                                          header: const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Pending Requests",
+                                              style: TextStyle(fontSize: 24, color: Color(0xff133c55)),
+                                            ),
+                                          ),
+                                          collapsed: const SizedBox(height: 10),
+                                          expanded: Column(
+                                            children: [
+                                              PreferredSize(preferredSize: const Size.fromHeight(200), child: Container()),
+                                            ],
+                                          ),
+                                        ))
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      : SizedBox(),
+                  Column(children: myTopics(noteIdList, screenSize, topicIdList, topicName)),
+                ],
               )
             ]),
-            Column(children: myTopics(noteIdList, screenSize, topicIdList, topicName)),
-          ],
-        )),
-      ),
+          )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
