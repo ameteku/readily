@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:readily/modules/home/homepage.dart';
+import 'package:readily/login-sign-up/login_page.dart';
+import 'package:readily/login-sign-up/sign_up.dart';
 import 'package:readily/modules/class/class_page.dart';
+import 'package:readily/modules/home/homepage.dart';
 import 'package:readily/modules/notes/note_slides.dart';
 
 void main() {
@@ -30,7 +32,9 @@ class MyApp extends StatelessWidget {
         // home: RootApp(title: 'Readily Notes'),
         initialRoute: '/',
         routes: {
-          '/': (context) => const MyHomePage(title: 'Readily Notes'),
+          '/login': (context) => LoginPage(),
+          '/signup': (context) => SignUpPage(),
+          '/homepage': (context) => const MyHomePage(title: 'Readily Notes'),
           '/class': (context) => ClassPage(title: 'Readily Notes'),
           '/note-slides': (context) => NoteSlideShowPage()
         });
