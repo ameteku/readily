@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:expandable/expandable.dart';
 import 'dart:io' as io;
 import 'dart:typed_data';
-
+import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
+import 'package:universal_html/html.dart' as html5;
 
 class ClassPage extends StatefulWidget {
   const ClassPage({Key? key, required this.title, required this.classId}) : super(key: key);
@@ -141,10 +143,27 @@ class _ClassPageState extends State<ClassPage> {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Classes:',
-              style: TextStyle(color: Color(0xff133c55), fontSize: 23),
-            ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Text(
+                'Classes:',
+                style: TextStyle(color: Color(0xff133c55), fontSize: 23),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  tooltip: 'Share Class',
+                  iconSize: 20,
+                  icon: const Icon(Icons.share),
+                  onPressed: () {
+                    var data = {
+                      "title": className,
+                      "text": 'Checkout this class on Readily for some great notes!',
+                    };
+                    share(data);
+                  },
+                ),
+              )
+            ]),
             Column(children: myTopics(noteIdList, screenSize, topicIdList, topicName)),
           ],
         )),
@@ -220,5 +239,14 @@ class _ClassPageState extends State<ClassPage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void share(Map data) async {
+    try {
+      await Share.share(data['text'], subject: data['title']);
+      print('done');
+    } catch (e) {
+      print(e);
+    }
   }
 }
