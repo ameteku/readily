@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'note_model.dart';
 
 part 'topic_model.g.dart';
@@ -21,6 +22,6 @@ class TopicModel {
 
   @override
   String toString() {
-    return 'TopicModel{topicName: $topicName, resourceLinks: $resourceLinks, Notes: $Notes}';
+    return 'TopicModel{topicName: $topicName, resourceLinks: $resourceLinks, Notes: $notes}';
   }
 }
