@@ -149,6 +149,7 @@ async function getClass(classId) {
     return list1[0]
 };
 
+
 async function getMultipleClasses(classIds) {
     var classDocs = await db.collection("classes").find({ "id": { $in: classIds } });
     const classDocList = await classDocs.toArray();
@@ -194,6 +195,16 @@ app.post("/get-classes", async (req, res) => {
 })
 
 // updateClassPermission() {};
+async function updateClassPermission(classId, permissions) {
+    await db.collection('classes').updateOne({
+        "classId" : classId
+    },
+    {
+        $set: {"permissions": permissions}
+
+});
+};
+
 
 // createTopic() {};
 
@@ -226,5 +237,21 @@ app.listen(3000, async () => {
 
     if (db != null)
         console.log("sometin! db success")
+
+    // var cursorFile = await db.collection('users').find({
+    //     "email" : "mike@gmail.com"
+    // });
+    // const list1 = await cursorFile.toArray()
+    // console.log(list1)
+    // await db.collection('users').updateOne({
+    //         "email" : "mike@gmail.com"
+    //     },
+    //     {
+    //         $set: {"password":"nope"}
+
+    // });
+    // const list1 = await cursorFile.toArray()
+    // console.log(list1)
+
 
 });
