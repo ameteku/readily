@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:readily/modules/home/homepage.dart';
+import 'package:readily/backend-requests/request.dart';
 import 'package:readily/modules/class/class_page.dart';
+import 'package:readily/modules/home/homepage.dart';
+import 'package:readily/modules/login-sign-up/login_page.dart';
+import 'package:readily/modules/login-sign-up/sign_up.dart';
 import 'package:readily/modules/notes/note_slides.dart';
 
+import 'appstate/app_state.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  late AppState _appState;
+  late BackendRequest _backendRequest;
+  MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    _appState = AppState();
+    _backendRequest = BackendRequest();
+
     return MaterialApp(
         title: 'Readily',
         theme: ThemeData(
@@ -28,11 +38,16 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         // home: RootApp(title: 'Readily Notes'),
-        initialRoute: '/',
+        initialRoute: '/login',
         routes: {
-          '/': (context) => const MyHomePage(title: 'Readily Notes'),
-          '/class': (context) => ClassPage(title: 'Readily Notes', classId: 2),
-          '/note-slides': (context) => NoteSlideShowPage()
+          '/login': (context) => LoginPage(
+                appState: _appState,
+                backendRequest: _backendRequest,
+              ),
+          '/signup': (context) => const SignUpPage(),
+          '/homepage': (context) => const MyHomePage(title: 'Readily Notes'),
+          '/class': (context) => const ClassPage(title: 'Readily Notes', classId: 2),
+          '/note-slides': (context) => const NoteSlideShowPage()
         });
   }
 }
