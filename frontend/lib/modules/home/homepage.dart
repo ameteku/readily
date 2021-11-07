@@ -1,16 +1,24 @@
 import 'dart:html';
+import 'dart:io' as io;
+import 'dart:typed_data';
 
+import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/src/types/image_source.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:readily/modules/class/class_page.dart';
+import 'package:file_picker/file_picker.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
   final String userName = 'Celina Lind';
+  final FileType _pickingType = FileType.image;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -37,6 +45,38 @@ class _MyHomePageState extends State<MyHomePage> {
         )
       ],
     );
+  }
+
+  void getImage(pickingType) async {
+    io.File? croppedImage;
+    List<PlatformFile>? _paths = (await FilePicker.platform.pickFiles(
+      type: pickingType,
+      allowMultiple: true,
+      onFileLoading: (FilePickerStatus status) => print(status),
+    ))
+        ?.files;
+
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, type: pickingType);
+    print('Results: $result');
+    // if (result != null) {
+    //   List<String?> files = _paths!.map((e) => e.path).toList();
+    //   print('Image Files List<String>' + files.toString());
+    //   print('file picker result: $FilePickerResult');
+    // } else {
+    //   // User canceled the picker
+    // }
+
+    if (result?.files.first != null) {
+      var fileBytes = result!.files.first.bytes;
+      var fileName = result!.files.first.name;
+      //return file;
+      Uint8List bytes = Uint8List.fromList(fileBytes!);
+      MemoryImage(bytes);
+      print('fileBytes: $fileBytes , fileName: $fileName');
+      //todo upload to storage db
+    } else {
+      throw "Cancelled File Picker";
+    }
   }
 
   @override
@@ -140,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 )
                               ])),
                               onPressed: () {
-                                // getImage(ImageSource.gallery);
+                                getImage(widget._pickingType);
                               },
                             ),
                           ),
@@ -171,19 +211,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-// void getImage(ImageSource source) async {
-//   File? image;
-//   File? croppedImage;
-//   // todo add try catch
-//   await ImagePicker().getImage(source: source).then((value) {
-//     print("Gotten image: ${value!.path}");
-//     image = File(value.path);
-//     _cropImage(image!).then((image) {
-//       if (image != null) {
-//         croppedImage = image;
-//         print("Cropped image ${croppedImage?.absolute}");
-//       }
-//     });
-//   });
-// }
