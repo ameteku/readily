@@ -8,8 +8,9 @@ class ClassModel {
   final String title;
   final DateTime dateCreated;
   final Map<String, List<String>> permissions;
+  final List<String> topicsId;
 
-  ClassModel({required this.id, required this.permissions, required this.title, required this.dateCreated});
+  ClassModel({required this.id, required this.permissions, required this.title, required this.dateCreated, required this.topicsId});
 
   factory ClassModel.fromJson(Map<String, dynamic> json) {
     return _$ClassModelFromJson(json);

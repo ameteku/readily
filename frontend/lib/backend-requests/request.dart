@@ -56,7 +56,32 @@ class BackendRequest {
     return [
       ClassModel(dateCreated: DateTime.now(), title: "Anatomy", id: "something", permissions: {
         "admin": ["ameteku"]
-      })
+      }, topicsId: [
+        "something",
+        "sfdgf",
+        "fgefbf"
+      ]),
+      ClassModel(dateCreated: DateTime.now(), title: "Anatomy", id: "something", permissions: {
+        "admin": ["ameteku"]
+      }, topicsId: [
+        "something",
+        "sfdgf",
+        "fgefbf"
+      ]),
+      ClassModel(dateCreated: DateTime.now(), title: "Anatomy", id: "something", permissions: {
+        "admin": ["ameteku"]
+      }, topicsId: [
+        "something",
+        "sfdgf",
+        "fgefbf"
+      ]),
+      ClassModel(dateCreated: DateTime.now(), title: "Anatomy", id: "something", permissions: {
+        "admin": ["ameteku"]
+      }, topicsId: [
+        "something",
+        "sfdgf",
+        "fgefbf"
+      ])
     ];
     return client.post(Uri.parse(_baseUrl + '/classes'), body: jsonEncode(body)).then((value) {
       dynamic result = value.body;

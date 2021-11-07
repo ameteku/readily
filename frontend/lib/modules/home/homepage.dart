@@ -95,15 +95,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (snapshot.hasData) {
                     return ListView(
                       children: snapshot.data!
-                          .map((e) => ListTile(
-                                title: Text(e.title),
-                                subtitle: Row(
-                                  children: [const Text('Date Created'), Text(e.permissions['admin']?[0] ?? "")],
+                          .map((e) => Container(
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                child: ListTile(
+                                  title: Text(e.title),
+                                  subtitle: Row(
+                                    children: [const Text('Date Created'), Text(e.permissions['admin']?[0] ?? "")],
+                                  ),
+                                  tileColor: const Color(0xfffcbfb7),
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/class');
+                                  },
                                 ),
-                                tileColor: const Color(0xfffcbfb7),
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/class');
-                                },
                               ))
                           .toList(),
                     );

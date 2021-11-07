@@ -14,6 +14,8 @@ ClassModel _$ClassModelFromJson(Map<String, dynamic> json) => ClassModel(
       ),
       title: json['title'] as String,
       dateCreated: DateTime.parse(json['dateCreated'] as String),
+      topicsId:
+          (json['topicsId'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$ClassModelToJson(ClassModel instance) =>
@@ -22,4 +24,5 @@ Map<String, dynamic> _$ClassModelToJson(ClassModel instance) =>
       'title': instance.title,
       'dateCreated': instance.dateCreated.toIso8601String(),
       'permissions': instance.permissions,
+      'topicsId': instance.topicsId,
     };
