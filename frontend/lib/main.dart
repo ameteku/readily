@@ -15,14 +15,14 @@ void main() {
 class MyApp extends StatelessWidget {
   late AppState _appState;
   late BackendRequest _backendRequest;
-  MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key})
+      : _appState = AppState(),
+        _backendRequest = BackendRequest(),
+        super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    _appState = AppState();
-    _backendRequest = BackendRequest();
-
     return MaterialApp(
         title: 'Readily',
         theme: ThemeData(

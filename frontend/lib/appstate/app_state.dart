@@ -4,7 +4,7 @@ import 'package:rxdart/rxdart.dart';
 class AppState {
   final BehaviorSubject<UserModel?> _user = BehaviorSubject<UserModel?>();
 
-  UserModel? get loggedInUser => _user.value;
+  UserModel? get loggedInUser => _user.hasValue ? _user.value : null;
 
   set loggedInUser(UserModel? user) {
     _user.value = user;

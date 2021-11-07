@@ -1,12 +1,12 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_platform_interface/src/types/image_source.dart';
-import 'package:image_cropper/image_cropper.dart';
+import 'package:readily/appstate/app_state.dart';
+import 'package:readily/backend-requests/request.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  final AppState appState;
+  final BackendRequest backendRequest;
+
+  const MyHomePage({Key? key, required this.title, required this.backendRequest, required this.appState}) : super(key: key);
 
   final String title;
   final String userName = 'Celina Lind';

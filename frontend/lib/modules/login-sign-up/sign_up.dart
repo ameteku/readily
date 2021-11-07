@@ -19,16 +19,15 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   void initState() {
-    if (widget.appState.getStreamOfUserChanges().hasValue) {
-      widget.appState.getStreamOfUserChanges().listen((event) {
-        if (event != null) {
-          String? currentRoute = ModalRoute.of(context)!.settings.name;
-          if (currentRoute == "/login" || currentRoute == '/signup') {
-            Navigator.pushNamed(context, "/homepage");
-          }
-        }
-      });
-    }
+    // if (widget.appState.getStreamOfUserChanges().hasValue) {
+    //   widget.appState.getStreamOfUserChanges().listen((event) {
+    //     if (event != null) {
+    //       String? currentRoute = ModalRoute.of(context)!.settings.name;
+    //       if (currentRoute == "/login" || currentRoute == '/signup') {
+    //         Navigator.pushNamed(context, "/homepage");
+    //       }
+    //     }
+    //   });
 
     for (var element in formFields) {
       controllers[element] = TextEditingController();
