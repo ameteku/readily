@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:readily/appstate/app_state.dart';
+import 'package:readily/backend-requests/request.dart';
+import 'package:readily/folder/user_model.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final AppState appState;
+  final BackendRequest backendRequest;
+  const LoginPage({required this.appState, required this.backendRequest, Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -37,7 +42,9 @@ class _LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: ListTile(title: const Text('Email'), subtitle: TextFormField()),
+                        child: ListTile(title: const Text('Email'), subtitle: TextFormField(
+
+                        )),
                       ),
                       Padding(
                         padding: EdgeInsets.all(8.0),
@@ -50,6 +57,8 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
+
+                              _formKey.currentState.
                             }
                             //todo add api search here
                           },
@@ -69,5 +78,19 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  loginUser(String password, String email) async {
+    UserModel? user = await  widget.backendRequest.loginUser(email, password);
+
+    if(user == null) {
+      showDialog(context: context, builder: (context) => AlertDialog(title: Text("Try Signing in Again"),
+      actions: [
+        SizedBox(
+          child: Center(child: TextButton(onPressed: () { Navigator.pop(context);
+          }, child: const Text("Go Back"),),),
+        )
+      ],),);
+    }
   }
 }

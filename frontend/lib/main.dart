@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:readily/backend-requests/request.dart';
 import 'package:readily/modules/class/class_page.dart';
 import 'package:readily/modules/home/homepage.dart';
 import 'package:readily/modules/login-sign-up/login_page.dart';
 import 'package:readily/modules/login-sign-up/sign_up.dart';
 import 'package:readily/modules/notes/note_slides.dart';
 
+import 'appstate/app_state.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  late final AppState _appState;
+  late final BackendRequest _backendRequest;
+  MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    _appState = AppState();
+    _backendRequest = BackendRequest();
+
     return MaterialApp(
         title: 'Readily',
         theme: ThemeData(
@@ -32,7 +40,10 @@ class MyApp extends StatelessWidget {
         // home: RootApp(title: 'Readily Notes'),
         initialRoute: '/login',
         routes: {
-          '/login': (context) => LoginPage(),
+          '/login': (context) => LoginPage(
+                appState: _appState,
+                backendRequest: _backendRequest,
+              ),
           '/signup': (context) => const SignUpPage(),
           '/': (context) => const MyHomePage(title: 'Readily Notes'),
           '/class': (context) => ClassPage(title: 'Readily Notes'),
