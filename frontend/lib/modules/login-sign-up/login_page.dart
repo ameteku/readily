@@ -28,6 +28,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.appState.loggedInUser != null) {
+      Navigator.pushNamed(context, "/homepage");
+    }
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -101,7 +104,8 @@ class _LoginPageState extends State<LoginPage> {
 
   loginUser(String password, String email) async {
     UserModel? user = await widget.backendRequest.loginUser(email, password);
-    user = UserModel(id: "sometinh", classIds: [], firstName: "Michael", lastName: "Ameteku");
+    user = UserModel(classIds: [], firstName: "Michael", lastName: "Ameteku", email: "something@gmail.com");
+
     if (user == null) {
       showDialog(
         context: context,

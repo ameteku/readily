@@ -30,4 +30,19 @@ class BackendRequest {
       return null;
     });
   }
+
+  Future<UserModel?> signUpUser(UserModel user) async {
+    client.post(Uri.parse(_baseUrl + "/signup"), body: user.toJson()).then((value) {
+      var body = jsonDecode(value.body);
+
+      if (body == null) {
+        return null;
+      } else {
+        return UserModel.fromJson(body);
+      }
+    }).catchError((error, stack) {
+      print("Error signing in: $error $stack");
+      return null;
+    });
+  }
 }

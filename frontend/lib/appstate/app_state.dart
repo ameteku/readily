@@ -9,4 +9,8 @@ class AppState {
   set loggedInUser(UserModel? user) {
     _user.value = user;
   }
+
+  ValueStream<UserModel?> getStreamOfUserChanges() {
+    return _user.stream;
+  }
 }
