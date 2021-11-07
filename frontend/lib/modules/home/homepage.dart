@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_platform_interface/src/types/image_source.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:readily/modules/class/class_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -18,6 +19,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormState>();
 
+  int classId = 1;
   // todo this function will filter through all the class ids for the given user and create a listview of classes
   ListView myClasses() {
     return ListView(
@@ -29,6 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           tileColor: Color(0xfffcbfb7),
           onTap: () {
+            // Navigator.pushNamed(context, '/class', arguments: ClassPage(title: widget.title, classId: classId));
             Navigator.pushNamed(context, '/class');
           },
         )

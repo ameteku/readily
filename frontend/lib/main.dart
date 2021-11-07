@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const MyHomePage(title: 'Readily Notes'),
-          '/class': (context) => ClassPage(title: 'Readily Notes'),
+          '/class': (context) => ClassPage(title: 'Readily Notes', classId: 2),
           '/note-slides': (context) => NoteSlideShowPage()
         });
   }

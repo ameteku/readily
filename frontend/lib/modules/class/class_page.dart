@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:expandable/expandable.dart';
 
 class ClassPage extends StatefulWidget {
-  const ClassPage({Key? key, required this.title}) : super(key: key);
-
+  const ClassPage({Key? key, required this.title, required this.classId}) : super(key: key);
+  final int classId;
   final String title;
   final String userName = 'Celina Lind';
   @override
@@ -14,6 +14,8 @@ class _ClassPageState extends State<ClassPage> {
   final _formKey = GlobalKey<FormState>();
   List<int> noteIdList = [1, 2, 3, 4, 5, 6, 7, 8, 6, 5, 4, 3, 33, 2, 2, 3];
   String topicName = 'Expensive';
+
+  //classId retrieved get class name from id as well as topics list then note list
   String className = 'Equation Time';
   List<int> topicIdList = [1, 3, 2, 4, 5, 6, 4, 2];
 
