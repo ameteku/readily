@@ -59,12 +59,26 @@ class BackendRequest {
     });
   }
 
-  createClass() async {}
+  createClass(String title) async {
+    Map<String, dynamic> body = {"title": title, "topicIds": []};
+
+    return client.post(Uri.parse(_baseUrl + '/create-class'), headers: header, body: jsonEncode(body)).then((value) {
+      dynamic result = jsonDecode(value.body);
+      if (result == null) {
+        return <ClassModel>[];
+      } else {
+        print("Result is $result");
+      }
+    }).catchError((error, stack) {
+      print("Error getting classes: $error $stack");
+      return <ClassModel>[];
+    });
+  }
 
   Future<List<ClassModel>?> getClasses(List<String> classIds, String authId) async {
     Map<String, dynamic> body = {"authId": authId, "classId": classIds};
 
-    return [
+    [
       ClassModel(dateCreated: DateTime.now(), title: "Anatomy", id: "something", permissions: {
         "admin": ["Gianna"]
       }, topicsId: [

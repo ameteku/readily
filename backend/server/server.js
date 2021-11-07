@@ -32,7 +32,7 @@ app.post('/signup', async (req, res) => {
     if (req.body == null) {
         res.json({})
     } else {
-        var username = req.body.username
+        var username = req.body.email
         console.log(username)
         var password = req.body.password;
         console.log(password)
@@ -85,7 +85,7 @@ app.post('/signin', async (req, res) => {
     if (req.body == null) {
         res.json({})
     } else {
-        var username = req.body.username
+        var username = req.body.email
         console.log(username)
         var password = req.body.password;
         console.log(password)
@@ -108,12 +108,15 @@ async function doesUserExistAndPassCorrectInDatabase(username, password) {
     });
     const list1 = await cursorFile.toArray()
 
+    console.log(list1);
     if (list1.length >= 1) {
+        console.log("usser" + list1);
         if (list1[0]['password'] == password) {
             return list1[0];
         }
         return false;
     } else {
+        console.log("falseeee");
         return false;
     }
 }

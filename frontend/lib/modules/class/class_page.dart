@@ -1,14 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:expandable/expandable.dart';
 import 'dart:io' as io;
 import 'dart:typed_data';
-import 'package:share_plus/share_plus.dart';
+
+import 'package:expandable/expandable.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
-import 'package:universal_html/html.dart' as html5;
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ClassPage extends StatefulWidget {
   const ClassPage({Key? key, required this.title, required this.classId}) : super(key: key);
@@ -150,7 +148,7 @@ class _ClassPageState extends State<ClassPage> {
               children: <Widget>[
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   const Text(
-                    'Classes:',
+                    'Topics:',
                     style: TextStyle(color: Color(0xff133c55), fontSize: 23),
                   ),
                   Padding(
