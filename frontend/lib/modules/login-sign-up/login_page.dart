@@ -13,10 +13,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -42,23 +53,31 @@ class _LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: ListTile(title: const Text('Email'), subtitle: TextFormField(
-
-                        )),
+                        child: ListTile(
+                            title: const Text('Email'),
+                            subtitle: TextFormField(
+                              controller: _emailController,
+                            )),
                       ),
                       Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: ListTile(title: const Text('Password'), subtitle: TextFormField()),
+                        child: ListTile(
+                            title: const Text('Password'),
+                            subtitle: TextFormField(
+                              controller: _passwordController,
+                            )),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: RaisedButton(
                           child: const Text("Login"),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
-
-                              _formKey.currentState.
+                          onPressed: () async {
+                            String email = _emailController.text;
+                            if (email.isNotEmpty) {
+                              String password = _passwordController.text;
+                              if (password.isNotEmpty) {
+                                await loginUser(password, email);
+                              }
                             }
                             //todo add api search here
                           },
@@ -81,16 +100,34 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   loginUser(String password, String email) async {
-    UserModel? user = await  widget.backendRequest.loginUser(email, password);
-
-    if(user == null) {
-      showDialog(context: context, builder: (context) => AlertDialog(title: Text("Try Signing in Again"),
-      actions: [
-        SizedBox(
-          child: Center(child: TextButton(onPressed: () { Navigator.pop(context);
-          }, child: const Text("Go Back"),),),
-        )
-      ],),);
+    UserModel? user = await widget.backendRequest.loginUser(email, password);
+    user = UserModel(id: "sometinh", classIds: [], firstName: "Michael", lastName: "Ameteku");
+    if (user == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text(
+            "Try Signing in Again",
+            style: TextStyle(color: Colors.red),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            SizedBox(
+              child: Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Go Back"),
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    } else {
+      widget.appState.loggedInUser = user;
+      Navigator.pushNamed(context, '/homepage');
     }
   }
 }

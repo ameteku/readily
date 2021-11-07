@@ -13,8 +13,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  late final AppState _appState;
-  late final BackendRequest _backendRequest;
+  late AppState _appState;
+  late BackendRequest _backendRequest;
   MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
                 backendRequest: _backendRequest,
               ),
           '/signup': (context) => const SignUpPage(),
-          '/': (context) => const MyHomePage(title: 'Readily Notes'),
+          '/homepage': (context) => const MyHomePage(title: 'Readily Notes'),
           '/class': (context) => ClassPage(title: 'Readily Notes'),
           '/note-slides': (context) => NoteSlideShowPage()
         });
