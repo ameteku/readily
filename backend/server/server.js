@@ -164,30 +164,97 @@ async function updateClassPermission(classId, permissions) {
     {
         $set: {"permissions": permissions}
 
-});
+    });
 };
 
-// createTopic() {};
+async function createTopic(topicId, topicName) {
+    //find topic in database
+    var cursorFile = await db.collection('topics').find({
+        "topic" : topicId
+    });
+    const list1 = await cursorFile.toArray()
+
+    if (list1.length >= 1){
+        return false    //class already exists
+    } else {
+        db.collection("topics").insertOne({
+            "pk" : "topics",
+            "id": topicId,
+            "name" : topicName
+        });
+        return {"message": "inserted successfully"}
+    }
+};
 
 
+async function createUser(firstName, lastName, classIds, username, password) {
+    var proceed = await doesUserExistAndAddNewUserInDatabase(firstName, lastName, classIds, username, password)
+    
+    return proceed
+};
 
+async function updateUser(firstName, lastName, classIds, username, password) {
+    await db.collection('users').updateOne({
+        "username" : username
+    },
+    {
+        $set: {
+            "firstName":firstName,
+            "lastName": lastName,
+            "classIds": classIds,
+            "username":username,
+            "password":password
+        }
 
-// createUser() {};
+    });
+};
 
-// signInUser () {};
+async function getNotes() {
+    //find username in database
+    var cursorFile = await db.collection('notes').find({});
+    const list1 = await cursorFile.toArray()
 
-// updateUser() {};
-
-// getNotes() {};
+    return list1;
+};
 
 // linkVideo() {};
 
 
 // deleteNote() {};
 
-// addNotes() {};
+async function addNote(noteId, uploadTime, noteLink, uploaderId, isPrivate) {
+    //find topic in database
+    var cursorFile = await db.collection('notes').find({
+        "id" : noteId
+    });
+    const list1 = await cursorFile.toArray()
 
-// toggleNotePrivacy() {};
+    if (list1.length >= 1){
+        return false    //class already exists
+    } else {
+        db.collection("notes").insertOne({
+            "pk" : "notes",
+            "id": noteId,
+            "uploadTime" : uploadTime,
+            "noteLink": noteLink,
+            "uploaderId" : uploaderId,
+            "isPrivate": isPrivate
+        });
+        return {"message": "inserted successfully"}
+    }
+};
+
+async function toggleNotePrivacy(noteId, privacy) {
+    await db.collection('notes').updateOne({
+        "noteId" : noteId
+    },
+    {
+        $set: {
+            "privacy":privacy
+        }
+
+    });
+};
 
 
 app.listen(3000, async ()=> {
