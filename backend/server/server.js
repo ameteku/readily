@@ -41,8 +41,8 @@ app.post('/signup', async (req, res) => {
         var classIds = req.body.classIds
 
         var proceed = await doesUserExistAndAddNewUserInDatabase(firstName, lastName, classIds, username, password)
-        console.log(proceed)
-
+        console.log(proceed);
+ 
         if (proceed == false) {
             res.json({})
         } else {
@@ -151,7 +151,7 @@ async function getClass(classId) {
 
 
 async function getMultipleClasses(classIds) {
-    var classDocs = await db.collection("classes").find({ "id": { $in: classIds } });
+    var classDocs = await db.collection("classes").find({ });
     const classDocList = await classDocs.toArray();
 
     return classDocList;
@@ -159,7 +159,7 @@ async function getMultipleClasses(classIds) {
 
 app.post("/create-class", async (req, res) => {
     if (req.body == null) {
-        res.json({});
+        res.json({}); 
     }
 
     const classId = 1;
@@ -177,16 +177,13 @@ app.post("/get-classes", async (req, res) => {
         res.json({});
     }
 
-    const classIds = JSON.parse(req.body.classIds);
-    if (classIds != null)
+    const classIds = req.body.classIds;
+  
 
        {
            console.log(typeof(classIds));
         var result = await getMultipleClasses(classIds);
         res.json(result);
-       }
-       else {
-           res.json({});
        }
 
     
