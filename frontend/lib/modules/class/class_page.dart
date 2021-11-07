@@ -65,41 +65,43 @@ class _ClassPageState extends State<ClassPage> {
 
     topicIds.forEach((id) {
       topicList.add(Container(
+          width: screenSize.width,
           child: ExpandablePanel(
-        header: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            topicName,
-            style: TextStyle(fontSize: 24, color: Color(0xff133c55)),
-          ),
-        ),
-        collapsed: SizedBox(height: 10),
-        expanded: Column(
-          children: [
-            PreferredSize(
-                preferredSize: const Size.fromHeight(200),
-                child: screenSize.width > 370
-                    ? Wrap(spacing: 8.0, runSpacing: 4.0, children: myNotes(noteIds, screenSize, context))
-                    : SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: myNotes(noteIds, screenSize, context)))),
-            Padding(
+            header: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                child: Center(
-                    child: Column(children: const [
-                  Text('Upload New Note'),
-                  Icon(
-                    Icons.add_a_photo,
-                    size: 24,
-                  )
-                ])),
-                onPressed: () {
-                  getImage(_pickingType);
-                },
+              child: Text(
+                topicName,
+                style: TextStyle(fontSize: 24, color: Color(0xff133c55)),
               ),
             ),
-          ],
-        ),
-      )));
+            collapsed: SizedBox(height: 10),
+            expanded: Column(
+              children: [
+                PreferredSize(
+                    preferredSize: const Size.fromHeight(200),
+                    child: screenSize.width > 370
+                        ? Wrap(spacing: 8.0, runSpacing: 4.0, children: myNotes(noteIds, screenSize, context))
+                        : SingleChildScrollView(
+                            scrollDirection: Axis.horizontal, child: Row(children: myNotes(noteIds, screenSize, context)))),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextButton(
+                    child: Center(
+                        child: Column(children: const [
+                      Text('Upload New Note'),
+                      Icon(
+                        Icons.add_a_photo,
+                        size: 24,
+                      )
+                    ])),
+                    onPressed: () {
+                      getImage(_pickingType);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          )));
     });
     return topicList;
   }
@@ -137,13 +139,16 @@ class _ClassPageState extends State<ClassPage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(mainAxisSize: MainAxisSize.max, crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+      body: FittedBox(
+        fit: BoxFit.fitHeight,
+        child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+                child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   const Text(
                     'Classes:',
                     style: TextStyle(color: Color(0xff133c55), fontSize: 23),
@@ -175,51 +180,91 @@ class _ClassPageState extends State<ClassPage> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    content: Stack(
-                                      children: <Widget>[
-                                        Positioned(
-                                          right: -40.0,
-                                          top: -40.0,
-                                          child: InkResponse(
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const CircleAvatar(
-                                              child: Icon(Icons.close),
-                                              backgroundColor: Colors.red,
-                                            ),
+                                      content: Stack(children: <Widget>[
+                                    Positioned(
+                                      right: -40.0,
+                                      top: -40.0,
+                                      child: InkResponse(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const CircleAvatar(
+                                          child: Icon(Icons.close),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                    Column(children: [
+                                      Container(
+                                          child: ExpandablePanel(
+                                              header: const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "Pending Requests",
+                                                  style: TextStyle(fontSize: 24, color: Color(0xff133c55)),
+                                                ),
+                                              ),
+                                              collapsed: const SizedBox(height: 30),
+                                              expanded: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Column(children: [
+                                                  PreferredSize(
+                                                      preferredSize: const Size.fromHeight(100),
+                                                      child: Container(child: Text('No pending requests..'))),
+                                                ]),
+                                              ))),
+                                      Container(
+                                          child: ExpandablePanel(
+                                        header: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "Classmates Permissions",
+                                            style: TextStyle(fontSize: 24, color: Color(0xff133c55)),
                                           ),
                                         ),
-                                        Container(
-                                            child: ExpandablePanel(
-                                          header: const Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              "Pending Requests",
-                                              style: TextStyle(fontSize: 24, color: Color(0xff133c55)),
-                                            ),
+                                        collapsed: const SizedBox(height: 30),
+                                        expanded: Column(children: [
+                                          PreferredSize(
+                                              preferredSize: const Size.fromHeight(200),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Row(
+                                                  children: const [
+                                                    Text('Michael'),
+                                                    SizedBox(
+                                                      width: 30,
+                                                    ),
+                                                    Text('Update-Access')
+                                                  ],
+                                                ),
+                                              )),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: PreferredSize(
+                                                preferredSize: const Size.fromHeight(200),
+                                                child: Row(children: const [
+                                                  Text('Sudi'),
+                                                  SizedBox(
+                                                    width: 30,
+                                                  ),
+                                                  Text('Read-Access')
+                                                ])),
                                           ),
-                                          collapsed: const SizedBox(height: 10),
-                                          expanded: Column(
-                                            children: [
-                                              PreferredSize(preferredSize: const Size.fromHeight(200), child: Container()),
-                                            ],
-                                          ),
-                                        ))
-                                      ],
-                                    ),
-                                  );
+                                        ]),
+                                      ))
+                                    ])
+                                  ]));
                                 },
                               );
                             },
                           ),
                         )
                       : SizedBox(),
-                  Column(children: myTopics(noteIdList, screenSize, topicIdList, topicName)),
-                ],
-              )
-            ]),
-          )),
+                ]),
+                Column(children: myTopics(noteIdList, screenSize, topicIdList, topicName)),
+              ],
+            ))),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
