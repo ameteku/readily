@@ -53,6 +53,11 @@ class BackendRequest {
   Future<List<ClassModel>?> getClasses(List<String> classIds, String authId) async {
     Map<String, dynamic> body = {"authId": authId, "classId": classIds};
 
+    return [
+      ClassModel(dateCreated: DateTime.now(), title: "Anatomy", id: "something", permissions: {
+        "admin": ["ameteku"]
+      })
+    ];
     return client.post(Uri.parse(_baseUrl + '/classes'), body: jsonEncode(body)).then((value) {
       dynamic result = value.body;
       if (result == null) {

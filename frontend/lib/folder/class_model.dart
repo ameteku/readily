@@ -6,9 +6,10 @@ part 'class_model.g.dart';
 class ClassModel {
   final String id;
   final String title;
+  final DateTime dateCreated;
   final Map<String, List<String>> permissions;
 
-  ClassModel({required this.id, required this.permissions, required this.title});
+  ClassModel({required this.id, required this.permissions, required this.title, required this.dateCreated});
 
   factory ClassModel.fromJson(Map<String, dynamic> json) {
     return _$ClassModelFromJson(json);

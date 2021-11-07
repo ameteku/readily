@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
                 appState: _appState,
                 backendRequest: _backendRequest,
               ),
-          '/homepage': (context) => const MyHomePage(title: 'Readily Notes'),
+          '/homepage': (context) => MyHomePage(appState: _appState, backendRequest: _backendRequest, title: 'Readily Notes'),
           '/class': (context) => const ClassPage(title: 'Readily Notes'),
           '/note-slides': (context) => const NoteSlideShowPage()
         });

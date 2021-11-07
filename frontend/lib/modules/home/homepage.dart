@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:readily/appstate/app_state.dart';
 import 'package:readily/backend-requests/request.dart';
+import 'package:readily/folder/class_model.dart';
 
 class MyHomePage extends StatefulWidget {
   final AppState appState;
@@ -36,19 +37,20 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  late Future<List<ClassModel>?> classModels;
+
+  @override
+  void initState() {
+    classModels = widget.backendRequest.getClasses(widget.appState.loggedInUser!.classIds, "temporary");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
         leading: Text(
           widget.userName, style: TextStyle(color: Colors.white, fontSize: 23),
@@ -86,7 +88,31 @@ class _MyHomePageState extends State<MyHomePage> {
               'Classes:',
               style: TextStyle(color: Color(0xff133c55), fontSize: 23),
             ),
-            Expanded(child: myClasses()),
+            Expanded(
+              child: FutureBuilder(
+                future: classModels,
+                builder: (context, AsyncSnapshot<List<ClassModel>?> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView(
+                      children: snapshot.data!
+                          .map((e) => ListTile(
+                                title: Text(e.title),
+                                subtitle: Row(
+                                  children: [const Text('Date Created'), Text(e.permissions['admin']?[0] ?? "")],
+                                ),
+                                tileColor: const Color(0xfffcbfb7),
+                                onTap: () {
+                                  Navigator.pushNamed(context, '/class');
+                                },
+                              ))
+                          .toList(),
+                    );
+                  } else {
+                    return const Text("Loading your Class...");
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),

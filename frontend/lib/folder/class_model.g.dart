@@ -13,11 +13,13 @@ ClassModel _$ClassModelFromJson(Map<String, dynamic> json) => ClassModel(
             MapEntry(k, (e as List<dynamic>).map((e) => e as String).toList()),
       ),
       title: json['title'] as String,
+      dateCreated: DateTime.parse(json['dateCreated'] as String),
     );
 
 Map<String, dynamic> _$ClassModelToJson(ClassModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
+      'dateCreated': instance.dateCreated.toIso8601String(),
       'permissions': instance.permissions,
     };
