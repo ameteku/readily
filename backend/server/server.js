@@ -20,10 +20,10 @@ const e = require('express');
 app.use(cors());
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+    res.send('Hello World!')
 })
 
 
@@ -31,7 +31,7 @@ app.post('/signup', async (req, res) => {
 
     if (req.body == null) {
         res.json({})
-    }else {
+    } else {
         var username = req.body.username
         console.log(username)
         var password = req.body.password;
@@ -42,49 +42,49 @@ app.post('/signup', async (req, res) => {
 
         var proceed = await doesUserExistAndAddNewUserInDatabase(firstName, lastName, classIds, username, password)
         console.log(proceed)
-        
+
         if (proceed == false) {
             res.json({})
         } else {
             res.json(proceed)
         }
     }
-    
+
 })
 
 
-async function doesUserExistAndAddNewUserInDatabase(firstName, lastName, classIds, username, password){
+async function doesUserExistAndAddNewUserInDatabase(firstName, lastName, classIds, username, password) {
     //find username in database
     var cursorFile = await db.collection('users').find({
-        "email" : username
+        "email": username
     });
     const list1 = await cursorFile.toArray()
 
-    if (list1.length >= 1){
+    if (list1.length >= 1) {
         return false    //user already exists
     } else {
         db.collection("users").insertOne({
-            "pk" : "semting",
+            "pk": "semting",
             "firstName": firstName,
-            "lastName" : lastName,
-            "classIds" : classIds,
-            "email" : username,
-            "password" : password,
+            "lastName": lastName,
+            "classIds": classIds,
+            "email": username,
+            "password": password,
 
         });
-        return {"message": "inserted successfully"}
+        return { "message": true }
     }
 }
 
 app.post('/signin', async (req, res) => {
     console.log("Body is");
     console.table(req.body);
-    
+
     // get the username and password
 
     if (req.body == null) {
         res.json({})
-    }else {
+    } else {
         var username = req.body.username
         console.log(username)
         var password = req.body.password;
@@ -92,7 +92,7 @@ app.post('/signin', async (req, res) => {
 
         var proceed = await doesUserExistAndPassCorrectInDatabase(username, password)
         console.log(proceed)
-        
+
         if (proceed == false) {
             res.json({})
         } else {
@@ -101,14 +101,14 @@ app.post('/signin', async (req, res) => {
     }
 })
 
-async function doesUserExistAndPassCorrectInDatabase(username, password){
+async function doesUserExistAndPassCorrectInDatabase(username, password) {
     //find username in database
     var cursorFile = await db.collection('users').find({
-        "email" : username
+        "email": username
     });
     const list1 = await cursorFile.toArray()
 
-    if (list1.length >= 1){
+    if (list1.length >= 1) {
         if (list1[0]['password'] == password) {
             return list1[0];
         }
@@ -119,43 +119,79 @@ async function doesUserExistAndPassCorrectInDatabase(username, password){
 }
 
 
-app.get('/signup', (req, res) => {
-    res.send('Sign up page')
-})
-
-app.get('/homepage', (req, res) => {
-    res.send('Sign up page')
-})
-
 async function createClass(classId, title, permissions, topics) {
     //find username in database
     var cursorFile = await db.collection('classes').find({
-        "classId" : classId
+        "classId": classId
     });
     const list1 = await cursorFile.toArray()
 
-    if (list1.length >= 1){
+    if (list1.length >= 1) {
         return false    //class already exists
     } else {
-        db.collection("classes").insertOne({
-            "pk" : "classes",
+        await db.collection("classes").insertOne({
+            "pk": "classes",
             "id": classId,
-            "title" : title,
-            "permissions" : permissions,
-            "topics" : topics
+            "title": title,
+            "permissions": permissions,
+            "topics": topics
         });
-        return {"message": "inserted successfully"}
+        return true;
     }
 };
 
 async function getClass(classId) {
     var cursorFile = await db.collection('classes').find({
-        "classId" : classId
+        "classId": classId
     });
-    const list1 = await cursorFile.toArray()
+    const list1 = await cursorFile.toArray();
 
     return list1[0]
 };
+
+async function getMultipleClasses(classIds) {
+    var classDocs = await db.collection("classes").find({ "id": { $in: classIds } });
+    const classDocList = await classDocs.toArray();
+
+    return classDocList;
+}
+
+app.post("/create-class", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    const classId = 1;
+    const title = req.body.title;
+    const permission = req.body.permissions;
+    const topics = req.body.topics;
+
+    var result = await createClass(classId, title, permission, topics);
+
+    res.json({ "result": result });
+});
+
+app.post("/get-classes", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    const classIds = JSON.parse(req.body.classIds);
+    if (classIds != null)
+
+       {
+           console.log(typeof(classIds));
+        var result = await getMultipleClasses(classIds);
+        res.json(result);
+       }
+       else {
+           res.json({});
+       }
+
+    
+
+
+})
 
 // updateClassPermission() {};
 
@@ -182,13 +218,13 @@ async function getClass(classId) {
 // toggleNotePrivacy() {};
 
 
-app.listen(3000, async ()=> {
-    db = (await clientDB.connect(config.endpoint).catch((e)=> {
+app.listen(3000, async () => {
+    db = (await clientDB.connect(config.endpoint).catch((e) => {
         console.log(`Error connecting to db:${e}`)
         throw `cannot connect to db ${e}`
     })).db("readily")
-    
-    if(db != null)
-    console.log("sometin! db success")
+
+    if (db != null)
+        console.log("sometin! db success")
 
 });
