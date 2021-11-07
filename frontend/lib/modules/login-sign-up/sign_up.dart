@@ -61,7 +61,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: () {
                   Navigator.pushNamed(context, '/login');
                 },
-                child: const Text("Or Sign Up"))
+                child: const Text("Log In"))
           ],
         ),
       ),
