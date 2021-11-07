@@ -1,17 +1,10 @@
-import 'dart:html';
 import 'dart:io' as io;
 import 'dart:typed_data';
 
-import 'package:file_picker/_internal/file_picker_web.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_platform_interface/src/types/image_source.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:readily/modules/class/class_page.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:readily/appstate/app_state.dart';
 import 'package:readily/backend-requests/request.dart';
 import 'package:readily/folder/class_model.dart';
