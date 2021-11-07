@@ -5,6 +5,7 @@ const cert = fs.readFileSync('./cert.pem');
 const bodyParser = require('body-parser');
 
 const config = require('../db/db-config');
+const user = require("../db/user-model").User
 const clientDB = require("../db/db").db;
 
 var db;
@@ -25,23 +26,55 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+
 app.post('/signup', async (req, res) => {
 
-    if (req.body) {
-        console.log("Body is");
-        console.table(req.body);
+    if (req.body == null) {
+        res.json({})
+    }else {
+        var username = req.body.username
+        console.log(username)
+        var password = req.body.password;
+        console.log(password)
+        var firstName = req.body.firstName
+        var lastName = req.body.lastName
+        var classIds = req.body.classIds
 
-        var body = JSON.parse(req.body)
-        var username = body.username
-        var password = body.password;
+        var proceed = await doesUserExistAndAddNewUserInDatabase(firstName, lastName, classIds, username, password)
+        console.log(proceed)
         
-        db.collection("users").insertOne({"pk" : "semting", "username" : username, "password" : password});
+        if (proceed == false) {
+            res.json({})
+        } else {
+            res.json(proceed)
+        }
     }
     
-    db.collection("users").insertOne({"pk" : "semting", "Sometinh" : "somethingelse"});
-
-    res.send("Inserted data data")
 })
+
+
+async function doesUserExistAndAddNewUserInDatabase(firstName, lastName, classIds, username, password){
+    //find username in database
+    var cursorFile = await db.collection('users').find({
+        "email" : username
+    });
+    const list1 = await cursorFile.toArray()
+
+    if (list1.length >= 1){
+        return false    //user already exists
+    } else {
+        db.collection("users").insertOne({
+            "pk" : "semting",
+            "firstName": firstName,
+            "lastName" : lastName,
+            "classIds" : classIds,
+            "email" : username,
+            "password" : password,
+
+        });
+        return {"message": "inserted successfully"}
+    }
+}
 
 app.post('/signin', async (req, res) => {
     console.log("Body is");
@@ -74,7 +107,6 @@ async function doesUserExistAndPassCorrectInDatabase(username, password){
         "email" : username
     });
     const list1 = await cursorFile.toArray()
-    console.log(list1)
 
     if (list1.length >= 1){
         if (list1[0]['password'] == password) {
@@ -95,13 +127,41 @@ app.get('/homepage', (req, res) => {
     res.send('Sign up page')
 })
 
-// createClass() {};
+async function createClass(classId, title, permissions, topics) {
+    //find username in database
+    var cursorFile = await db.collection('classes').find({
+        "classId" : classId
+    });
+    const list1 = await cursorFile.toArray()
+
+    if (list1.length >= 1){
+        return false    //class already exists
+    } else {
+        db.collection("classes").insertOne({
+            "pk" : "classes",
+            "id": classId,
+            "title" : title,
+            "permissions" : permissions,
+            "topics" : topics
+        });
+        return {"message": "inserted successfully"}
+    }
+};
+
+async function getClass(classId) {
+    var cursorFile = await db.collection('classes').find({
+        "classId" : classId
+    });
+    const list1 = await cursorFile.toArray()
+
+    return list1[0]
+};
 
 // updateClassPermission() {};
 
 // createTopic() {};
 
-// getClass() {};
+
 
 
 // createUser() {};
