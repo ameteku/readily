@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:expandable/expandable.dart';
+import 'dart:io' as io;
+import 'dart:typed_data';
+import 'package:share_plus/share_plus.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
+import 'package:universal_html/html.dart' as html5;
 
 class ClassPage extends StatefulWidget {
-  const ClassPage({Key? key, required this.title}) : super(key: key);
-
+  const ClassPage({Key? key, required this.title, required this.classId}) : super(key: key);
+  final int classId;
   final String title;
   final String userName = 'Celina Lind';
   @override
@@ -14,8 +23,41 @@ class _ClassPageState extends State<ClassPage> {
   final _formKey = GlobalKey<FormState>();
   List<int> noteIdList = [1, 2, 3, 4, 5, 6, 7, 8, 6, 5, 4, 3, 33, 2, 2, 3];
   String topicName = 'Expensive';
+  late List<Uint8List?> byteImageInfo = [];
+  //classId retrieved get class name from id as well as topics list then note list
   String className = 'Equation Time';
   List<int> topicIdList = [1, 3, 2, 4, 5, 6, 4, 2];
+  final FileType _pickingType = FileType.image;
+
+  void getImage(pickingType) async {
+    io.File? croppedImage;
+    List<PlatformFile>? _paths = (await FilePicker.platform.pickFiles(
+      type: pickingType,
+      allowMultiple: true,
+      onFileLoading: (FilePickerStatus status) => print(status),
+    ))
+        ?.files;
+
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true, type: pickingType);
+    print('Results: $result');
+
+    if (result?.files != null) {
+      Uint8List? fileBytes;
+      String fileName;
+      // var fileBytes = result!.files.first.bytes;
+      // var fileName = result!.files.first.name;
+      result?.files.forEach((element) {
+        fileBytes = element.bytes;
+        fileName = element.name;
+        setState(() {
+          byteImageInfo.add(Uint8List.fromList(fileBytes!));
+        });
+        //todo upload to storage db
+      });
+    } else {
+      throw "Cancelled File Picker";
+    }
+  }
 
   List<Widget> myTopics(List<int> noteIds, Size screenSize, List<int> topicIds, String topicName) {
     List<Widget> topicList = [];
@@ -36,8 +78,8 @@ class _ClassPageState extends State<ClassPage> {
             PreferredSize(
                 preferredSize: const Size.fromHeight(200),
                 child: screenSize.width > 370
-                    ? Wrap(spacing: 8.0, runSpacing: 4.0, children: myNotes(noteIds, screenSize))
-                    : SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: myNotes(noteIds, screenSize)))),
+                    ? Wrap(spacing: 8.0, runSpacing: 4.0, children: myNotes(noteIds, screenSize, context))
+                    : SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: myNotes(noteIds, screenSize, context)))),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextButton(
@@ -50,7 +92,7 @@ class _ClassPageState extends State<ClassPage> {
                   )
                 ])),
                 onPressed: () {
-                  // getImage(ImageSource.gallery);
+                  getImage(_pickingType);
                 },
               ),
             ),
@@ -61,16 +103,26 @@ class _ClassPageState extends State<ClassPage> {
     return topicList;
   }
 
-  List<Widget> myNotes(List<int> noteIds, Size screenSize) {
+  List<Widget> myNotes(List<int> noteIds, Size screenSize, BuildContext context) {
     List<Widget> noteList = [];
-    noteIds.forEach((id) {
-      noteList.add(Container(
-          height: 150,
-          width: 110,
-          child: ListTile(
-              title: Container(
-            color: Colors.lightGreenAccent,
-          ))));
+    // noteIds.forEach((id) {
+    byteImageInfo.forEach((element) {
+      noteList.add(byteImageInfo.isNotEmpty
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                // child: Image(image: MemoryImage(element!, scale: 2), width: 110, height: 150),
+                child: Image.memory(element!, width: 110, height: 200),
+                onTap: () {
+                  Navigator.pushNamed(context, '/note-slides');
+                },
+              ),
+            )
+          : Container(
+              color: Colors.lightGreenAccent,
+              height: 150,
+              width: 110,
+            ));
     });
     return noteList;
   }
@@ -91,10 +143,27 @@ class _ClassPageState extends State<ClassPage> {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'Classes:',
-              style: TextStyle(color: Color(0xff133c55), fontSize: 23),
-            ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Text(
+                'Classes:',
+                style: TextStyle(color: Color(0xff133c55), fontSize: 23),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  tooltip: 'Share Class',
+                  iconSize: 20,
+                  icon: const Icon(Icons.share),
+                  onPressed: () {
+                    var data = {
+                      "title": className,
+                      "text": 'Checkout this class on Readily for some great notes!',
+                    };
+                    share(data);
+                  },
+                ),
+              )
+            ]),
             Column(children: myTopics(noteIdList, screenSize, topicIdList, topicName)),
           ],
         )),
@@ -141,7 +210,7 @@ class _ClassPageState extends State<ClassPage> {
                                 )
                               ])),
                               onPressed: () {
-                                // getImage(ImageSource.gallery);
+                                getImage(_pickingType);
                               },
                             ),
                           ),
@@ -170,5 +239,14 @@ class _ClassPageState extends State<ClassPage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void share(Map data) async {
+    try {
+      await Share.share(data['text'], subject: data['title']);
+      print('done');
+    } catch (e) {
+      print(e);
+    }
   }
 }
