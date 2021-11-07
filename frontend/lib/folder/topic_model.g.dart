@@ -7,18 +7,18 @@ part of 'topic_model.dart';
 // **************************************************************************
 
 TopicModel _$TopicModelFromJson(Map<String, dynamic> json) => TopicModel(
+      topicId: json['topicId'] as int,
       topicName: json['topicName'] as String,
       resourceLinks: (json['resourceLinks'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      notes: (json['notes'] as List<dynamic>)
-          .map((e) => NoteModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      noteIds: (json['noteIds'] as List<dynamic>).map((e) => e as int).toList(),
     );
 
 Map<String, dynamic> _$TopicModelToJson(TopicModel instance) =>
     <String, dynamic>{
+      'topicId': instance.topicId,
       'topicName': instance.topicName,
       'resourceLinks': instance.resourceLinks,
-      'notes': instance.notes,
+      'noteIds': instance.noteIds,
     };
