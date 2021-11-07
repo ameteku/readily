@@ -189,9 +189,19 @@ app.post("/get-classes", async (req, res) => {
            res.json({});
        }
 
-    
+})
 
+app.post("/class/update-permissions", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
 
+    const classId = req.body.classId;
+    const permission = req.body.permissions;
+
+    await updateClassPermission(classId, permissions);
+
+    res.json({ "result": "update successful" }); 
 })
 
 // updateClassPermission() {};
@@ -205,17 +215,27 @@ async function updateClassPermission(classId, permissions) {
     });
 };
 
-<<<<<<< HEAD
+app.post("/create-topic", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    const topicId = req.body.topicId;
+    const topicName = req.body.topicName;
+
+    var result = await createTopic(topicId, topicName);
+
+    res.json({ "result": result });
+});
+
 async function createTopic(topicId, topicName) {
     //find topic in database
     var cursorFile = await db.collection('topics').find({
         "topic" : topicId
     });
     const list1 = await cursorFile.toArray()
-=======
 
 // createTopic() {};
->>>>>>> e3c5457a740fa8e13e50b41a0cc04f21cdfa8cd4
 
     if (list1.length >= 1){
         return false    //class already exists
@@ -236,6 +256,23 @@ async function createUser(firstName, lastName, classIds, username, password) {
     return proceed
 };
 
+app.post("/update-user", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    const username = req.body.username;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const classIds = req.body.classIds;
+    const password = req.body.password;
+    
+
+    await updateUser(firstName, lastName, classIds, username, password);
+
+    res.json({ "result": "update successful" }); 
+})
+
 async function updateUser(firstName, lastName, classIds, username, password) {
     await db.collection('users').updateOne({
         "username" : username
@@ -252,6 +289,16 @@ async function updateUser(firstName, lastName, classIds, username, password) {
     });
 };
 
+app.post("/get-notes", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    var result = await getNotes();
+    res.json(result);
+
+})
+
 async function getNotes() {
     //find username in database
     var cursorFile = await db.collection('notes').find({});
@@ -264,6 +311,22 @@ async function getNotes() {
 
 
 // deleteNote() {};
+
+app.post("/add-note", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    const noteId = req.body.noteId;
+    const uploadTime = req.body.uploadTime;
+    const noteLink = req.body.noteLink;
+    const uploaderId = req.body.uploaderId;
+    const isPrivate = req.body.isPrivate;
+
+    var result = await addNote(noteId, uploadTime, noteLink, uploaderId, isPrivate);
+
+    res.json({ "result": result });
+});
 
 async function addNote(noteId, uploadTime, noteLink, uploaderId, isPrivate) {
     //find topic in database
@@ -286,6 +349,19 @@ async function addNote(noteId, uploadTime, noteLink, uploaderId, isPrivate) {
         return {"message": "inserted successfully"}
     }
 };
+
+app.post("/notes/update-privacy", async (req, res) => {
+    if (req.body == null) {
+        res.json({});
+    }
+
+    const noteId = req.body.noteId;
+    const privacy = req.body.privacy;
+
+    await toggleNotePrivacy(noteId, privacy);
+
+    res.json({ "result": "update successful" }); 
+})
 
 async function toggleNotePrivacy(noteId, privacy) {
     await db.collection('notes').updateOne({
