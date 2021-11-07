@@ -117,8 +117,8 @@ app.listen(3000, async ()=> {
     if(db != null)
     console.log("sometin! db success")
 
-    var test = (db.collection("users"))
-    console.log(test);
+    var test = await db.collection('users').find({}).forEach(e=> console.log(e));
+    console.table(test);
     
 
 });
